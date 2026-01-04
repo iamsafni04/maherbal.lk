@@ -35,7 +35,7 @@ async function checkAuthState() {
     if (!nav) return;
 
     try {
-        const auth = await fetch('/api/check-auth').then(res => res.json());
+        const auth = await fetch('/api/check-auth', { credentials: 'include' }).then(res => res.json());
 
         // Admin link removed from menu (accessible via footer)
         let adminHtml = '';
@@ -81,6 +81,7 @@ async function promptAdmin() {
     try {
         const res = await fetch('/api/admin-login', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin: pin })
         });
@@ -96,7 +97,7 @@ async function promptAdmin() {
 }
 
 async function logout() {
-    await fetch('/api/logout', { method: 'POST' });
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
     window.location.reload();
 }
 
@@ -190,6 +191,7 @@ async function syncCartWithServer() {
     try {
         await fetch('/api/sync-cart', {
             method: 'POST',
+            credentials: 'include', // Ensure cart sync sends cookie
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cart: cartData })
         });

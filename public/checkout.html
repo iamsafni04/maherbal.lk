@@ -479,6 +479,7 @@
             try {
                 const res = await fetch('/api/place-order', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         customer: customerData,
