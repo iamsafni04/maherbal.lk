@@ -234,16 +234,18 @@ app.delete('/api/products/:id', async (req, res) => {
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // Use SSL
+    port: 587,
+    secure: false, // Use STARTTLS
     auth: {
         user: 'safneeasm@gmail.com',
         pass: 'beny oetx yrwb tckv'
     },
-    // Add timeouts to avoid hanging indefinitely or failing too quickly
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000
+    tls: {
+        rejectUnauthorized: false // Helps with some self-signed cert issues in cloud envs
+    },
+    connectionTimeout: 20000, // Increased timeout
+    greetingTimeout: 20000,
+    socketTimeout: 20000
 });
 
 app.post('/api/place-order', async (req, res) => {
