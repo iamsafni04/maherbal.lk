@@ -58,8 +58,7 @@ app.post('/api/signup', async (req, res) => {
     const { error } = await supabase.from('users').insert([{
         email,
         password: hashedPassword,
-        cart: [],
-        items_ordered: [] // Matching older structure or simple array
+        cart: []
     }]);
 
     if (error) return res.status(500).json({ error: error.message });
@@ -76,8 +75,8 @@ app.post('/api/login', async (req, res) => {
 
     if (error || !user) {
         // Fallback for hardcoded Admin (if not in DB yet)
-        if (email === 'admin' && password === ADMIN_PIN) { 
-             // This logic was not clearly in original but let's keep pin flow usually
+        if (email === 'admin' && password === ADMIN_PIN) {
+            // This logic was not clearly in original but let's keep pin flow usually
         }
         return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -104,7 +103,7 @@ app.post('/api/logout', (req, res) => {
 app.post('/api/sync-cart', async (req, res) => {
     if (!req.session.user) return res.status(401).json({ error: 'Login required' });
     const { cart } = req.body;
-    
+
     const { error } = await supabase
         .from('users')
         .update({ cart: cart })
@@ -151,9 +150,9 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
         const { data, error } = await supabase.storage
             .from('products')
             .upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
-        
+
         if (error) return res.status(500).json({ error: 'Image upload failed: ' + error.message });
-        
+
         const { data: publicData } = supabase.storage.from('products').getPublicUrl(fileName);
         imageUrl = publicData.publicUrl;
     }
@@ -200,7 +199,7 @@ app.put('/api/products/:id', upload.single('image'), async (req, res) => {
         const { error } = await supabase.storage
             .from('products')
             .upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
-        
+
         if (!error) {
             const { data: publicData } = supabase.storage.from('products').getPublicUrl(fileName);
             updates.image = publicData.publicUrl;
