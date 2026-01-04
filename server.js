@@ -233,11 +233,17 @@ app.delete('/api/products/:id', async (req, res) => {
 // --- ORDER ROUTES ---
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: 'safneeasm@gmail.com',
-        pass: 'xzcx ddtt evlg iclz' // Use App Password
-    }
+        pass: 'xzcx ddtt evlg iclz'
+    },
+    // Add timeouts to avoid hanging indefinitely or failing too quickly
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000
 });
 
 app.post('/api/place-order', async (req, res) => {
