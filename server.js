@@ -238,7 +238,7 @@ const transporter = nodemailer.createTransport({
     secure: true, // Use SSL
     auth: {
         user: 'safneeasm@gmail.com',
-        pass: 'xzcx ddtt evlg iclz'
+        pass: 'beny oetx yrwb tckv'
     },
     // Add timeouts to avoid hanging indefinitely or failing too quickly
     connectionTimeout: 10000,
