@@ -244,10 +244,10 @@ app.post('/api/place-order', async (req, res) => {
     const { customer = {}, payment = 'COD', items = [], subtotal = 0, deliveryCharge = 0, total = 0, totalWeight = 0 } = req.body;
     const orderId = Date.now();
 
-    // 1. Send Email
+    // 1. Prepare Email
     const itemsList = items.map(item => `- ${item.name} (Qty: ${item.qty}) - Rs. ${(item.price * item.qty).toLocaleString()}`).join('\n');
     const mailOptions = {
-        from: 'safneeasm@gmail.com',
+        from: '"MaHerbals Store" <safneeasm@gmail.com>', // Added Name
         to: 'safneeasm@gmail.com',
         subject: `NEW ORDER: ${payment} - Total Rs. ${total.toLocaleString()}`,
         text: `New order details:\n\n` +
@@ -261,31 +261,40 @@ app.post('/api/place-order', async (req, res) => {
             `PAYMENT: ${payment}`
     };
 
-    transporter.sendMail(mailOptions, async (error, info) => {
-        if (error) console.error("Email Error:", error);
+    try {
+        // Attempt to send email
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Order email sent for Order #${orderId}`);
+    } catch (emailError) {
+        console.error(`❌ FAILED to send email for Order #${orderId}:`, emailError);
+        // We continue execution to save the order even if email fails
+    }
 
-        // 2. Save Order to Supabase
-        const orderData = {
-            order_id: orderId, // using bigint id
-            user_email: req.session.user ? req.session.user.email : null,
-            customer_info: customer,
-            items: items,
-            total,
-            payment_method: payment,
-            status: 'Processing',
-            created_at: new Date()
-        };
+    // 2. Save Order to Supabase
+    const orderData = {
+        order_id: orderId,
+        user_email: req.session.user ? req.session.user.email : null,
+        customer_info: customer,
+        items: items,
+        total,
+        payment_method: payment,
+        status: 'Processing',
+        created_at: new Date()
+    };
 
-        const { error: dbError } = await supabase.from('orders').insert([orderData]);
-        if (dbError) console.error("DB Error:", dbError);
+    const { error: dbError } = await supabase.from('orders').insert([orderData]);
 
-        // 3. Clear Cart if User Logged In
-        if (req.session.user) {
-            await supabase.from('users').update({ cart: [] }).eq('email', req.session.user.email);
-        }
+    if (dbError) {
+        console.error("DB Error:", dbError);
+        return res.status(500).json({ error: "Failed to save order." });
+    }
 
-        res.json({ success: true });
-    });
+    // 3. Clear Cart if User Logged In
+    if (req.session.user) {
+        await supabase.from('users').update({ cart: [] }).eq('email', req.session.user.email);
+    }
+
+    res.json({ success: true });
 });
 
 // Start Server
