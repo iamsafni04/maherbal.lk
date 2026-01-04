@@ -146,7 +146,10 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
 
     let imageUrl = '';
     if (req.file) {
-        const fileName = `${Date.now()}_${req.file.originalname}`;
+        // Sanitize filename
+        const sanitizedParams = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const fileName = `${Date.now()}_${sanitizedParams}`;
+
         const { data, error } = await supabase.storage
             .from('products')
             .upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
@@ -195,15 +198,17 @@ app.put('/api/products/:id', upload.single('image'), async (req, res) => {
     };
 
     if (req.file) {
-        const fileName = `${Date.now()}_${req.file.originalname}`;
+        const sanitizedParams = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const fileName = `${Date.now()}_${sanitizedParams}`;
+
         const { error } = await supabase.storage
             .from('products')
             .upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
 
-        if (!error) {
-            const { data: publicData } = supabase.storage.from('products').getPublicUrl(fileName);
-            updates.image = publicData.publicUrl;
-        }
+        if (error) return res.status(500).json({ error: 'Update image failed: ' + error.message });
+
+        const { data: publicData } = supabase.storage.from('products').getPublicUrl(fileName);
+        updates.image = publicData.publicUrl;
     }
 
     const { data, error } = await supabase
