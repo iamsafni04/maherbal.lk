@@ -87,7 +87,7 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const auth = await fetch('/api/check-auth').then(res => res.json());
+            const auth = await fetch('/api/check-auth', { credentials: 'include' }).then(res => res.json());
             if (!auth) {
                 window.location.href = 'login.html';
                 return;
@@ -97,7 +97,7 @@
 
         async function fetchOrderHistory() {
             try {
-                const res = await fetch('/api/order-history');
+                const res = await fetch('/api/order-history', { credentials: 'include' });
                 const orders = await res.json();
                 const list = document.getElementById('orders-list');
 
@@ -121,13 +121,13 @@
                     <div class="order-card">
                         <div class="order-header">
                             <div>
-                                <div style="font-weight:900; color:var(--primary); font-size:1.2rem;">Order #${order.orderId.toString().slice(-6)}</div>
-                                <div style="font-size:0.8rem; color:var(--text-muted);">${new Date(order.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                <div style="font-weight:900; color:var(--primary); font-size:1.2rem;">Order #${order.order_id.toString().slice(-6)}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">${new Date(order.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                             </div>
                             <span class="status-badge">${order.status || 'Processing'}</span>
                         </div>
                         <div class="order-items">
-                            ${order.items.map(item => `
+                            ${(order.items || []).map(item => `
                                 <div class="order-item-row">
                                     <span>${item.name} (×${item.qty})</span>
                                     <span style="font-weight:700; color:var(--text);">Rs. ${(item.price * item.qty).toLocaleString()}</span>
@@ -136,7 +136,7 @@
                         </div>
                         <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px dashed var(--border); display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-weight:800; color:var(--text-muted);">Total Paid</span>
-                            <span style="font-weight:900; color:var(--secondary); font-size:1.4rem;">Rs. ${order.total.toLocaleString()}</span>
+                            <span style="font-weight:900; color:var(--secondary); font-size:1.4rem;">Rs. ${Number(order.total).toLocaleString()}</span>
                         </div>
                     </div>
                 `).join('');
