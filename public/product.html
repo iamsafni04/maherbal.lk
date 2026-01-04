@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Preview - MaHerbals</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .product-preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 2rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .product-visual {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .main-img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: var(--shadow-hover);
+            border: 1px solid var(--border);
+            transition: 0.5s;
+        }
+
+        .main-img:hover {
+            transform: scale(1.02);
+        }
+
+        .product-details h1 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .preview-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .desc-box {
+            background: var(--glass);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .input-wrap {
+            margin-bottom: 2.5rem;
+        }
+
+        .input-wrap label {
+            display: block;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .option-chip {
+            padding: 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-chip:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .option-chip.selected {
+            border-color: var(--accent);
+            background: var(--card-bg);
+            box-shadow: 0 10px 25px rgba(255, 159, 28, 0.2);
+            transform: scale(1.05);
+        }
+
+        .option-chip.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .chip-name {
+            display: block;
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .chip-price {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+
+        /* Loading Spinner */
+        .page-loader {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <a href="index.html" class="logo"><img src="logo.png" alt="MaHerbals"></a>
+                <div class="slogan-container">
+                    <span class="slogan-main">MaHerbals</span>
+                    <span class="slogan-sub">Pure &bull; Premium &bull; Powerful</span>
+                </div>
+            </div>
+            <nav class="nav-links" id="main-nav">
+                <!-- script.js will inject here -->
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div id="product-content">
+            <div class="page-loader">
+                <div class="loading-spinner"
+                    style="border: 5px solid rgba(0,0,0,0.05); border-left-color: var(--accent); border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;">
+                </div>
+                <p style="margin-top: 2rem; font-weight: 700; color: var(--text-muted);">REFining NATURE'S DETAILS...
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleCart()">&times;</span>
+            <h2
+                style="color:var(--primary); margin-bottom: 2rem; font-size: 2rem; font-weight: 800; border-bottom: 2px solid var(--accent); display: inline-block;">
+                Your Basket</h2>
+            <div id="cart-items-list" style="margin-top: 1rem;">
+                <!-- Cart items will be here -->
+            </div>
+            <div class="cart-total" style="border-top: 3px double var(--border); padding-top: 2rem; margin-top: 2rem;">
+                Total: <span style="font-size: 1rem; color: var(--text-muted);">Rs.</span> <span id="cart-total-amount"
+                    style="color: var(--secondary);">0</span>
+            </div>
+            <button class="checkout-btn" onclick="proceedToCheckout()">Secure Checkout</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        let selectedVariant = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!productId) {
+                window.location.href = 'index.html';
+                return;
+            }
+            fetchProductDetails();
+        });
+
+        async function fetchProductDetails() {
+            try {
+                const res = await fetch('/api/products');
+                const products = await res.json();
+                currentProduct = products.find(p => p.id == productId);
+                if (!currentProduct) {
+                    document.getElementById('product-content').innerHTML = '<h2>Product not found.</h2>';
+                    return;
+                }
+                renderProduct(currentProduct);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderProduct(p) {
+            const container = document.getElementById('product-content');
+
+            // Default selection is the main product
+            selectedVariant = {
+                name: `Standard (${p.weight}${p.unit || 'kg'})`,
+                price: p.price,
+                weight: p.weight
+            };
+
+            container.innerHTML = `
+                <div class="product-preview-container">
+                    <div class="product-visual">
+                        <img src="${p.image || 'https://placehold.co/600x600'}" class="main-img" alt="${p.name}">
+                    </div>
+                    <div class="product-details">
+                        <span style="background: var(--accent); color: white; padding: 4px 12px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">${p.category}</span>
+                        <h1>${p.name}</h1>
+                        <span class="preview-price">Rs. ${parseFloat(p.price).toLocaleString()}</span>
+                        
+                        <div class="desc-box">
+                            <h3 style="margin-bottom: 0.5rem; color: var(--primary);">Botanical Benefits:</h3>
+                            ${p.description}
+                        </div>
+                        <div class="input-wrap">
+                            <label>Choose Your Option</label>
+                            <div class="option-grid">
+                                <div class="option-chip selected" onclick="selectChip(this, '${selectedVariant.name}', ${p.price}, ${p.weight})">
+                                    <span class="chip-name">Standard</span>
+                                    <span class="chip-price">Rs. ${p.price.toLocaleString()}</span>
+                                </div>
+                                ${(p.variants || []).map(v => `
+                                    <div class="option-chip" onclick="selectChip(this, '${v.name}', ${v.price}, ${v.weight})">
+                                        <span class="chip-name">${v.name}</span>
+                                        <span class="chip-price">Rs. ${v.price.toLocaleString()}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        <div class="input-wrap" style="margin-top: 2rem;">
+                            <label>Quantity</label>
+                            <div style="display: flex; align-items: center; gap: 1rem; background: var(--bg); padding: 0.5rem; border-radius: 15px; width: fit-content; border: 1px solid var(--border);">
+                                <button onclick="changeQty(-1)" style="width: 40px; height: 40px; border-radius: 10px; border: none; background: white; font-weight: 800; cursor: pointer;">-</button>
+                                <input type="number" id="buy-qty" value="1" min="1" style="width: 50px; text-align: center; border: none; background: transparent; font-weight: 800; font-size: 1.1rem; outline: none;" readonly>
+                                <button onclick="changeQty(1)" style="width: 40px; height: 40px; border-radius: 10px; border: none; background: white; font-weight: 800; cursor: pointer;">+</button>
+                            </div>
+                        </div>
+
+                        <div class="action-btns" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button class="glow-btn" style="flex: 1;" onclick="addCurrentToCart()">Add to Basket</button>
+                            <button class="glow-btn" style="flex: 1; background: var(--accent);" onclick="buyNow()">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeQty(delta) {
+            const input = document.getElementById('buy-qty');
+            let val = parseInt(input.value) + delta;
+            if (val < 1) val = 1;
+            input.value = val;
+        }
+
+        function buyNow() {
+            if (!selectedVariant) return alert('Please choose an option first');
+
+            const qty = parseInt(document.getElementById('buy-qty').value);
+
+            // Store in a TEMPORARY key so it doesn't mess with the "Add to Basket" items
+            localStorage.setItem('buyNowItem', JSON.stringify({
+                id: currentProduct.id + '_' + selectedVariant.name,
+                name: currentProduct.name + ' (' + selectedVariant.name + ')',
+                price: selectedVariant.price,
+                weight: selectedVariant.weight,
+                image: currentProduct.image,
+                qty: qty
+            }));
+
+            window.location.href = 'checkout.html';
+        }
+
+        function selectChip(el, name, price, weight) {
+            // Update UI
+            document.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+
+            // Update State
+            selectedVariant = { name, price, weight };
+
+            // Update Price Display
+            document.querySelector('.preview-price').innerText = `Rs. ${parseFloat(price).toLocaleString()}`;
+        }
+
+        function addCurrentToCart() {
+            if (!selectedVariant) return alert('Please choose an option first');
+
+            const qty = parseInt(document.getElementById('buy-qty').value);
+
+            addToCartGlobal({
+                id: currentProduct.id + '_' + selectedVariant.name,
+                name: currentProduct.name + ' (' + selectedVariant.name + ')',
+                price: selectedVariant.price,
+                weight: selectedVariant.weight,
+                image: currentProduct.image,
+                qty: qty
+            }, false);
+        }
+    </script>
+</body>
+
+</html>

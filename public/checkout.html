@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MaHerbals Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- Premium Checkout Specific Styles --- */
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2.5rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .summary-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            transition: 0.3s;
+        }
+
+        .summary-box:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .total-row {
+            border-top: 2px solid var(--border);
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--primary);
+        }
+
+        /* --- Step Indicator Animation --- */
+        .checkout-steps {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding: 0.5rem;
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .step {
+            flex: 1;
+            padding: 1.2rem;
+            text-align: center;
+            border-radius: 15px;
+            font-weight: 800;
+            color: var(--text-muted);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .step.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(12, 61, 241, 0.2);
+        }
+
+        /* --- Payment Options Animation --- */
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .payment-opt {
+            padding: 2rem;
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            background: var(--card-bg);
+        }
+
+        .payment-opt:hover {
+            transform: translateY(-8px);
+            border-color: var(--secondary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .payment-opt.selected {
+            border-color: var(--accent);
+            background: rgba(255, 159, 28, 0.05);
+            box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.1);
+        }
+
+        .payment-opt h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .payment-opt p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Attractive Input Physics --- */
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label span {
+            color: var(--accent);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 1.1rem 1.4rem;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            transform: scale(1.02) translateX(8px);
+            border-color: var(--secondary);
+            outline: none;
+            background: var(--card-bg);
+            box-shadow: 0 15px 30px rgba(79, 111, 82, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-box {
+                position: static;
+            }
+
+            .field-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Page Loading State */
+        .btn-loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <a href="index.html" class="logo"><img src="logo.png" alt="MaHerbals"></a>
+                <div class="slogan-container">
+                    <span class="slogan-main">MaHerbals</span>
+                    <span class="slogan-sub">Secure Checkout</span>
+                </div>
+            </div>
+            <nav class="nav-links" id="main-nav">
+                <!-- script.js will handle injections -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 4rem;">
+        <h1 class="section-title" style="margin-bottom: 3rem; text-align: left;">Secure <span
+                style="color: var(--accent);">Checkout</span></h1>
+
+        <div class="checkout-layout">
+            <!-- Left Side: Steps -->
+            <div class="checkout-main">
+                <div class="checkout-steps">
+                    <div id="step-1-indicator" class="step active">1. Delivery Destination</div>
+                    <div id="step-2-indicator" class="step">2. Settlement Method</div>
+                </div>
+
+                <!-- Step 1: Shipping Details -->
+                <div id="step-1" class="form-container" style="margin: 0; width: 100%; animation: slideIn 0.5s ease;">
+                    <form id="details-form">
+                        <div class="form-group">
+                            <label><span>👤</span> Full Receiver Name</label>
+                            <input type="text" id="cust-name" required placeholder="eg. Harish Bandara">
+                        </div>
+
+                        <div class="field-grid">
+                            <div class="form-group">
+                                <label><span>📞</span> Contact Number</label>
+                                <input type="tel" id="cust-phone" required placeholder="07xxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label><span>🏘️</span> Home Town</label>
+                                <input type="text" id="cust-town" required placeholder="eg. Kandy City">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><span>📍</span> Street Address / Building</label>
+                            <textarea id="cust-address" rows="2" required
+                                placeholder="No. 123, Galle Road, Colombo"></textarea>
+                        </div>
+
+                        <div class="field-grid">
+                            <div class="form-group">
+                                <label><span>🏙️</span> City</label>
+                                <input type="text" id="cust-city" required placeholder="eg. Colombo">
+                            </div>
+                            <div class="form-group">
+                                <label><span>📮</span> Postal Code</label>
+                                <input type="text" id="cust-zip" required placeholder="eg. 10100">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><span>🗺️</span> Province</label>
+                            <select id="cust-province" required>
+                                <option value="" disabled selected>Select Your Province</option>
+                                <option value="Central">Central</option>
+                                <option value="Eastern">Eastern</option>
+                                <option value="North Central">North Central</option>
+                                <option value="Northern">Northern</option>
+                                <option value="North Western">North Western</option>
+                                <option value="Sabaragamuwa">Sabaragamuwa</option>
+                                <option value="Southern">Southern</option>
+                                <option value="Uva">Uva</option>
+                                <option value="Western">Western</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="glow-btn" style="width: 100%; margin-top: 2rem;">Proceed to
+                            Payment</button>
+                    </form>
+                </div>
+
+                <!-- Step 2: Payment Method -->
+                <div id="step-2" class="form-container"
+                    style="margin: 0; width: 100%; display: none; animation: slideIn 0.5s ease;">
+                    <h2 style="color: var(--primary); font-weight: 800; margin-bottom: 1.5rem;">Payment Method
+                    </h2>
+                    <div class="payment-options">
+                        <div class="payment-opt selected" id="opt-cod" onclick="selectPayment('COD')">
+                            <h3>🏠 Cash on Delivery</h3>
+                            <p>Pay when you receive your order</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction: column; gap: 1.5rem; margin-top: 3rem;">
+                        <button id="complete-order-btn" class="glow-btn"
+                            style="width: 100%; height: 75px; font-size: 1.4rem;">
+                            <span>CONFIRM & PLACE ORDER</span>
+                        </button>
+                        <button onclick="showStep(1)"
+                            style="background:transparent; border:none; color: var(--text-muted); font-weight: 700; cursor: pointer; text-decoration: underline;">←
+                            Modify Delivery Info</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Order Summary -->
+            <div class="summary-side">
+                <div class="summary-box">
+                    <h3
+                        style="margin-bottom: 2rem; color: var(--primary); font-size: 1.8rem; font-weight: 800; border-bottom: 2px solid var(--accent); display: inline-block;">
+                        Receipt</h3>
+
+                    <div id="checkout-items-list"
+                        style="margin-bottom: 2rem; max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                        <!-- Items Injected -->
+                    </div>
+
+                    <div style="border-top: 2px dashed var(--border); padding-top: 2rem;">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal" style="color: var(--text); font-weight: 700;">Rs. 0</span>
+                        </div>
+                        <div class="summary-row" style="color: var(--text-muted); font-size: 0.9rem;">
+                            <span>Total Mass</span>
+                            <span id="total-weight">0 kg</span>
+                        </div>
+                        <div class="summary-row" style="color: #FF0000; font-weight: 800;">
+                            <span>Logistics Fee</span>
+                            <span id="delivery-charge">Rs. 450</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>PAYABLE TOTAL</span>
+                            <span id="grand-total">Rs. 0</span>
+                        </div>
+                    </div>
+
+                    <p
+                        style="margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; text-align: center;">
+                        🛡️ Your transaction is secured by MaHerbals SSL Encryption
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Check for "Buy Now" direct purchase item first
+        const buyNowData = localStorage.getItem('buyNowItem');
+        let checkoutItems = [];
+        let isBuyNow = false;
+
+        if (buyNowData) {
+            checkoutItems = [JSON.parse(buyNowData)];
+            isBuyNow = true;
+            // We keep it in storage until order is placed or user leaves
+        } else {
+            checkoutItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        }
+        let selectedPayment = 'COD';
+        let customerData = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Init
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+
+            if (checkoutItems.length === 0) { window.location.href = 'index.html'; return; }
+            calculateAndRender();
+            selectPayment('COD'); // Default
+
+            // Safety: If user navigates away, we should clear the Buy Now item eventually
+            window.addEventListener('beforeunload', () => {
+                // Only clear if we are leaving this specific checkout session
+            });
+        });
+
+        function calculateAndRender() {
+            const subtotal = checkoutItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const totalWeight = checkoutItems.reduce((acc, item) => acc + ((item.weight || 0) * item.qty), 0);
+
+            // Logic: 450 for 1st kg, +70 for extra
+            const extraKg = Math.max(0, Math.ceil(totalWeight) - 1);
+            const deliveryCharge = 450 + (extraKg * 70);
+
+            // Render Items
+            document.getElementById('checkout-items-list').innerHTML = checkoutItems.map(item => `
+                <div class="summary-row" style="align-items: center; margin-bottom: 1.2rem;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 800; color: var(--primary);">${item.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.qty} × Rs. ${item.price.toLocaleString()}</div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--text);">Rs. ${(item.price * item.qty).toLocaleString()}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('subtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
+            document.getElementById('total-weight').innerText = `${totalWeight.toFixed(2)} kg`;
+            document.getElementById('delivery-charge').innerText = `Rs. ${deliveryCharge.toLocaleString()}`;
+            document.getElementById('grand-total').innerText = `Rs. ${(subtotal + deliveryCharge).toLocaleString()}`;
+
+            customerData.subtotal = subtotal;
+            customerData.deliveryCharge = deliveryCharge;
+            customerData.total = subtotal + deliveryCharge;
+            customerData.totalWeight = totalWeight;
+        }
+
+        function showStep(s) {
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const ind1 = document.getElementById('step-1-indicator');
+            const ind2 = document.getElementById('step-2-indicator');
+
+            if (s === 1) {
+                step1.style.display = 'block';
+                step2.style.display = 'none';
+                ind1.classList.add('active');
+                ind2.classList.remove('active');
+            } else {
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+                ind1.classList.remove('active');
+                ind2.classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('details-form').onsubmit = (e) => {
+            e.preventDefault();
+            customerData.name = document.getElementById('cust-name').value;
+            customerData.phone = document.getElementById('cust-phone').value;
+            customerData.town = document.getElementById('cust-town').value;
+            customerData.address = document.getElementById('cust-address').value;
+            customerData.city = document.getElementById('cust-city').value;
+            customerData.zip = document.getElementById('cust-zip').value;
+            customerData.province = document.getElementById('cust-province').value;
+
+            // Reconstruct full address for backend compatibility if needed
+            customerData.fullAddress = `${customerData.address}, ${customerData.town}, ${customerData.city}, ${customerData.province}, ${customerData.zip}`;
+
+            showStep(2);
+        };
+
+        function selectPayment(p) {
+            selectedPayment = p;
+            document.getElementById('opt-cod').classList.toggle('selected', p === 'COD');
+            document.getElementById('opt-card').classList.toggle('selected', p === 'CARD');
+        }
+
+        document.getElementById('complete-order-btn').onclick = async () => {
+            const btn = document.getElementById('complete-order-btn');
+            const originalContent = btn.innerHTML;
+
+            btn.innerHTML = '<div class="loading-spinner"></div> SECURING ORDER...';
+            btn.classList.add('btn-loading');
+
+            try {
+                const res = await fetch('/api/place-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer: customerData,
+                        payment: selectedPayment,
+                        items: checkoutItems,
+                        subtotal: customerData.subtotal,
+                        deliveryCharge: customerData.deliveryCharge,
+                        total: customerData.total,
+                        totalWeight: customerData.totalWeight
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Success exit animation
+                    document.querySelector('.checkout-layout').style.opacity = '0';
+                    document.querySelector('.checkout-layout').style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        alert('ORDER PLACED SUCCESSFULLY! Welcome to MaHerbals.');
+                        localStorage.removeItem('cart');
+                        localStorage.removeItem('buyNowItem');
+                        window.location.href = 'index.html';
+                    }, 500);
+                } else {
+                    const errorData = await res.json();
+                    alert('Error: ' + (errorData.error || 'Logistics Engine Error'));
+                    btn.innerHTML = originalContent;
+                    btn.classList.remove('btn-loading');
+                }
+            } catch (err) {
+                alert('Connection to server lost. Please retry.');
+                btn.innerHTML = originalContent;
+                btn.classList.remove('btn-loading');
+            }
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+[
+  {
+    "email": "safneeasm@gmail.com",
+    "password": "$2b$10$5TIhU3v/.ESD.rFNZQ9aDemUptMwk7ozxO5V.YxnDlFy837bE8AFy"
+  },
+  {
+    "email": "admin@maherbals.com",
+    "password": "$2b$10$k46vLOXAkerIp32mKiAE/ebfGMREy1lHtLjX9pt5KDhlfOWbTElq."
+  },
+  {
+    "email": "ahamedass.24@uom.lk",
+    "password": "$2b$10$Q0aTkgItFJ5J34dvWG58puQOZJ.ap2lPSjX9AII2LQ9ERT.NSSuHa",
+    "orders": [
+      {
+        "orderId": 1767479772321,
+        "date": "2026-01-03T22:36:17.391Z",
+        "items": [
+          {
+            "id": "1767473795970_Standard (0.1kg)",
+            "name": "Mehendi Powder (Standard (0.1kg))",
+            "price": 1000,
+            "weight": 0.1,
+            "image": "/uploads/1767473795716.png",
+            "qty": 1
+          }
+        ],
+        "total": 1450,
+        "payment": "COD",
+        "status": "Processing"
+      },
+      {
+        "orderId": 1767479833577,
+        "date": "2026-01-03T22:37:16.727Z",
+        "items": [
+          {
+            "id": "1767473795970_Standard (0.1kg)",
+            "name": "Mehendi Powder (Standard (0.1kg))",
+            "price": 1000,
+            "weight": 0.1,
+            "image": "/uploads/1767473795716.png",
+            "qty": 2
+          }
+        ],
+        "total": 2450,
+        "payment": "CARD",
+        "status": "Processing"
+      },
+      {
+        "orderId": 1767479955950,
+        "date": "2026-01-03T22:39:19.183Z",
+        "items": [
+          {
+            "id": "1767473795970_Standard (0.1kg)",
+            "name": "Mehendi Powder (Standard (0.1kg))",
+            "price": 1000,
+            "weight": 0.1,
+            "image": "/uploads/1767473795716.png",
+            "qty": 1
+          }
+        ],
+        "total": 1450,
+        "payment": "CARD",
+        "status": "Processing"
+      },
+      {
+        "orderId": 1767523623481,
+        "date": "2026-01-04T10:47:08.508Z",
+        "items": [
+          {
+            "id": "1767473795970_600g",
+            "name": "Mehendi Powder (600g)",
+            "price": 1500,
+            "weight": 50,
+            "image": "/uploads/1767473795716.png",
+            "qty": 1
+          }
+        ],
+        "total": 5380,
+        "payment": "CARD",
+        "status": "Processing"
+      }
+    ],
+    "cart": [
+      {
+        "id": "1767471558670_Standard (1ml)",
+        "name": "tea tree (Standard (1ml))",
+        "price": 200,
+        "weight": 1,
+        "image": "/uploads/1767471558663.png",
+        "qty": 2
+      }
+    ]
+  },
+  {
+    "email": "johnpaul.abernathy@example.com",
+    "password": "$2b$10$E9rOX3ORjZ8iZgzO1TnX9umtRoDBeu/Sb1Mdny7oDJ2sDvAAFGfMW",
+    "cart": [
+      {
+        "id": "1767473795970_Standard (0.1kg)",
+        "name": "Mehendi Powder (Standard (0.1kg))",
+        "price": 1000,
+        "weight": 0.1,
+        "image": "/uploads/1767473795716.png",
+        "qty": 3
+      }
+    ],
+    "orders": []
+  }
+]

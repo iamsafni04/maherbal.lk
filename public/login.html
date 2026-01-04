@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MaHerbals Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- Login Specific Premium Animations --- */
+        .login-page-wrapper {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top right, var(--glass), transparent),
+                radial-gradient(circle at bottom left, rgba(12, 61, 241, 0.05), transparent);
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            padding: 3.5rem;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: 0.4s;
+        }
+
+        .login-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 20%);
+            opacity: 0.05;
+            pointer-events: none;
+            animation: rotateBg 20s linear infinite;
+        }
+
+        @keyframes rotateBg {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .welcome-text h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .welcome-text p {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* --- Animated Input Scaffolding --- */
+        .input-box {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-box label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 18px;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .input-box input:focus {
+            border-color: var(--accent);
+            background: var(--card-bg);
+            box-shadow: 0 10px 20px rgba(255, 159, 28, 0.1);
+            outline: none;
+            transform: scale(1.02);
+        }
+
+        /* --- Password View Toggle --- */
+        .pass-toggle {
+            position: absolute;
+            right: 15px;
+            bottom: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 5px;
+            transition: 0.3s;
+            z-index: 5;
+            color: var(--text-muted);
+        }
+
+        .pass-toggle:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Decorative Vector Shapes --- */
+        .shape {
+            position: absolute;
+            z-index: -1;
+            filter: blur(40px);
+            opacity: 0.4;
+        }
+
+        .shape-1 {
+            top: 10%;
+            left: -10%;
+            width: 200px;
+            height: 200px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .shape-2 {
+            bottom: 10%;
+            right: -10%;
+            width: 150px;
+            height: 150px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* --- Login Button Engine --- */
+        .auth-btn-container {
+            margin-top: 3rem;
+            perspective: 1000px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            height: 65px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: 0.5s;
+            box-shadow: 0 15px 35px rgba(12, 61, 241, 0.2);
+        }
+
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.6s;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(12, 61, 241, 0.3);
+        }
+
+        .auth-btn:hover::before {
+            left: 100%;
+        }
+
+        .auth-btn:active {
+            transform: scale(0.98);
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-weight: 600;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin-left: 5px;
+            border-bottom: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Loading State Overlay */
+        .btn-loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-loading span {
+            display: none;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            top: 50%;
+            left: 50%;
+            margin: -12.5px 0 0 -12.5px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <a href="index.html" class="logo"><img src="logo.png" alt="MaHerbals"></a>
+                <div class="slogan-container">
+                    <span class="slogan-main">MaHerbals</span>
+                    <span class="slogan-sub">Member Access</span>
+                </div>
+            </div>
+            <nav class="nav-links" id="main-nav">
+                <!-- script.js will handle injections (Theme Switch etc) -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="login-page-wrapper">
+        <!-- Background Orbs -->
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+
+        <div class="login-card">
+            <div class="welcome-text">
+                <h2>Welcome Back</h2>
+                <p>Sign in to access nature's premium secrets</p>
+            </div>
+
+            <form id="login-form">
+                <div class="input-box">
+                    <label>Email</label>
+                    <input type="email" id="email" required placeholder="name@domain.com">
+                </div>
+
+                <div class="input-box">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                    <button type="button" class="pass-toggle" id="pass-toggle-btn" onclick="togglePass()">👁️</button>
+                </div>
+
+                <div class="auth-btn-container">
+                    <button type="submit" id="login-submit-btn" class="auth-btn">
+                        <span>Login</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="footer-links">
+                New to the MaHerbals? <a href="signup.html">Register Here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function togglePass() {
+            const p = document.getElementById('password');
+            const btn = document.getElementById('pass-toggle-btn');
+            if (p.type === 'password') {
+                p.type = 'text';
+                btn.innerText = '👓';
+            } else {
+                p.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('login-submit-btn');
+
+            // Add loading state
+            btn.classList.add('btn-loading');
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Restore server cart to local storage
+                    if (data.cart) {
+                        localStorage.setItem('cart', JSON.stringify(data.cart));
+                    }
+
+                    // Smooth transition to dashboard
+                    document.querySelector('.login-card').style.transform = 'translateY(-20px) scale(0.95)';
+                    document.querySelector('.login-card').style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = data.isAdmin ? 'admin.html' : 'index.html';
+                    }, 500);
+                } else {
+                    alert('Identity Verification Failed. Check your credentials.');
+                    btn.classList.remove('btn-loading');
+                }
+            } catch (err) {
+                alert('Connection to Mother Nature lost. Restart Server.');
+                btn.classList.remove('btn-loading');
+            }
+        };
+    </script>
+</body>
+
+</html>

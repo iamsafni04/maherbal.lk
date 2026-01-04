@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - MaHerbals</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .order-card {
+            background: var(--glass);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            animation: slideIn 0.5s ease backwards;
+            transition: 0.3s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--secondary);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-badge {
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .order-items {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <a href="index.html" class="logo"><img src="logo.png" alt="MaHerbals"></a>
+                <div class="slogan-container">
+                    <span class="slogan-main">MaHerbals</span>
+                    <span class="slogan-sub">Order History</span>
+                </div>
+            </div>
+            <nav class="nav-links" id="main-nav">
+                <!-- script.js will handle injections -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 5rem;">
+        <h1 class="section-title" style="margin-bottom: 4rem;">Botanical <span
+                style="color:var(--accent);">Journey</span></h1>
+
+        <div id="orders-list" style="max-width: 800px; margin: 0 auto;">
+            <!-- Orders will be injected here -->
+            <div style="text-align:center; padding: 4rem;">
+                <div class="loading-spinner" style="margin: 0 auto;"></div>
+                <p style="margin-top:2rem; color:var(--text-muted);">fetching your history...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const auth = await fetch('/api/check-auth').then(res => res.json());
+            if (!auth) {
+                window.location.href = 'login.html';
+                return;
+            }
+            fetchOrderHistory();
+        });
+
+        async function fetchOrderHistory() {
+            try {
+                const res = await fetch('/api/order-history');
+                const orders = await res.json();
+                const list = document.getElementById('orders-list');
+
+                if (!Array.isArray(orders)) {
+                    throw new Error("Invalid server response");
+                }
+
+                if (orders.length === 0) {
+                    list.innerHTML = `
+                        <div style="text-align:center; padding: 4rem; background: var(--glass); border-radius:30px;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🌱</div>
+                            <h2 style="color:var(--primary);">You haven't started your journey yet.</h2>
+                            <p style="color:var(--text-muted); margin-bottom: 2rem;">Explore our collection to place your first order.</p>
+                            <a href="index.html" class="glow-btn" style="display:inline-block; text-decoration:none;">Explore Store</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = orders.reverse().map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div style="font-weight:900; color:var(--primary); font-size:1.2rem;">Order #${order.orderId.toString().slice(-6)}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">${new Date(order.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                            </div>
+                            <span class="status-badge">${order.status || 'Processing'}</span>
+                        </div>
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item-row">
+                                    <span>${item.name} (×${item.qty})</span>
+                                    <span style="font-weight:700; color:var(--text);">Rs. ${(item.price * item.qty).toLocaleString()}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px dashed var(--border); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:800; color:var(--text-muted);">Total Paid</span>
+                            <span style="font-weight:900; color:var(--secondary); font-size:1.4rem;">Rs. ${order.total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                document.getElementById('orders-list').innerHTML = '<p style="color:red; text-align:center;">Failed to load order history.</p>';
+            }
+        }
+    </script>
+</body>
+
+</html>

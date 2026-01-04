@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1767471523965,
+    "name": "Mehendi Powder",
+    "price": 100,
+    "description": "asdcasc",
+    "category": "powder",
+    "unit": "kg",
+    "weight": 1,
+    "saleType": "offer",
+    "active": true,
+    "variants": [],
+    "image": "/uploads/1767471523813.png"
+  },
+  {
+    "id": 1767471558670,
+    "name": "tea tree",
+    "price": 200,
+    "description": "oil",
+    "category": "oil",
+    "unit": "ml",
+    "weight": 1,
+    "saleType": "normal",
+    "active": true,
+    "variants": [],
+    "image": "/uploads/1767471558663.png"
+  },
+  {
+    "id": 1767473795970,
+    "name": "Mehendi Powder",
+    "price": 1000,
+    "description": "powder",
+    "category": "powder",
+    "unit": "kg",
+    "weight": 0.1,
+    "saleType": "flash deals",
+    "active": true,
+    "variants": [
+      {
+        "name": "600g",
+        "price": 1500,
+        "weight": 50
+      }
+    ],
+    "image": "/uploads/1767473795716.png"
+  },
+  {
+    "id": 1767473982491,
+    "name": "Mehendi Powder",
+    "price": 100,
+    "description": "wscf",
+    "category": "powder",
+    "unit": "kg",
+    "weight": 1,
+    "saleType": "normal",
+    "active": true,
+    "variants": [
+      {
+        "name": "500",
+        "price": 20,
+        "weight": 0.3
+      }
+    ],
+    "image": ""
+  }
+]

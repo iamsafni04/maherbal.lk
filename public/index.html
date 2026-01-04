@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaHerbals - Premium Herbal Products</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <a href="index.html" class="logo"><img src="logo.png" alt="MaHerbals"></a>
+                <div class="slogan-container">
+                    <span class="slogan-main">MaHerbals</span>
+                    <span class="slogan-sub">Pure &bull; Premium &bull; Powerful</span>
+                </div>
+            </div>
+            <nav class="nav-links" id="main-nav">
+                <!-- script.js will inject the Theme Toggle, Cart, and Auth links here -->
+                <div style="padding: 1rem; color: rgba(255,255,255,0.5);">Connecting...</div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div style="position: relative; z-index: 2;">
+            <div style="margin-top: 15rem;">
+                <button class="glow-btn"
+                    onclick="document.getElementById('products-grid').scrollIntoView({behavior: 'smooth'})">Explore
+                    Collection</button>
+            </div>
+        </div>
+        <!-- Decorative Vectorized Elements -->
+        <div
+            style="position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,159,28,0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(50px);">
+        </div>
+        <div
+            style="position: absolute; bottom: -150px; right: -150px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(12, 61, 241, 0.1) 0%, transparent 70%); border-radius: 50%; filter: blur(60px);">
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Nurtured by Nature, Delivered by Us</h2>
+        <div id="products-grid" class="products-grid">
+            <!-- Products will be injected here via JavaScript -->
+            <div style="text-align:center; grid-column: 1/-1; padding: 6rem 0;">
+                <div class="loading-spinner"
+                    style="border: 5px solid rgba(0,0,0,0.05); border-left-color: var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 0.8s linear infinite; margin: 0 auto;">
+                </div>
+                <p style="margin-top: 1.5rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">
+                    PREPARING YOUR BOTANICALS...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleCart()">&times;</span>
+            <h2
+                style="color:var(--primary); margin-bottom: 2rem; font-size: 2rem; font-weight: 800; border-bottom: 2px solid var(--accent); display: inline-block;">
+                Your Basket</h2>
+            <div id="cart-items-list" style="margin-top: 1rem;">
+                <!-- Cart items will be here -->
+            </div>
+            <div class="cart-total" style="border-top: 3px double var(--border); padding-top: 2rem; margin-top: 2rem;">
+                Total: <span style="font-size: 1rem; color: var(--text-muted);">Rs.</span> <span id="cart-total-amount"
+                    style="color: var(--secondary);">0</span>
+            </div>
+            <button class="checkout-btn" onclick="proceedToCheckout()">Secure Checkout</button>
+        </div>
+    </div>
+    <!-- Premium Botanical Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <a href="index.html" class="logo" style="margin-bottom: 1.5rem;"><img src="logo.png" alt="MaHerbals"
+                        style="height: 90px;"></a>
+                <p>MaHerbals is dedicated to bringing you the finest botanical treasures from nature's heart. Pure,
+                    premium, and powerful.</p>
+                <div class="social-links">
+                    <a href="https://web.facebook.com/profile.php?id=61577647550887" target="_blank" class="social-link"
+                        title="Facebook">f</a>
+                    <a href="https://wa.me/94774200408" target="_blank" class="social-link" title="WhatsApp">w</a>
+                    <a href="https://www.instagram.com/maherbals.lk/" target="_blank" class="social-link"
+                        title="Instagram">i</a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-contact-list" style="padding: 0;">
+                    <li><a href="index.html" style="color: inherit; text-decoration: none;">Buy Products</a>
+                    </li>
+                    <li><a href="login.html" style="color: inherit; text-decoration: none;">User Login</a></li>
+                    <li><a href="admin.html" style="color: inherit; text-decoration: none;">Admin Access</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-col" id="contact">
+                <h3>Contact Us</h3>
+                <ul class="footer-contact-list">
+                    <li><span>📍</span> Wellawatta, Colombo 06, Western Province, Sri Lanka</li>
+                    <li><span>📞</span> +94 77 420 0408</li>
+                    <li><span>✉️</span> contact@maherballk.com</li>
+                    <li><span>🕒</span> 08:00 AM - 06:00 PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 MaHerbals (PVT) LTD. All Rights Reserved. | Designed with Nature.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

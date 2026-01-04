@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MaHerbals</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- Premium Admin Enhancements --- */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 3rem;
+            animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 100px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-container:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        /* --- Animated Field Groups --- */
+        .field-group {
+            position: relative;
+            margin-bottom: 2rem;
+            transition: 0.3s;
+        }
+
+        .field-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .field-group input,
+        .field-group select,
+        .field-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 15px;
+            border: 2px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .field-group input:focus,
+        .field-group select:focus,
+        .field-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 159, 28, 0.2);
+            outline: none;
+            transform: scale(1.01);
+        }
+
+        /* --- Variant (Options) Animation --- */
+        #variants-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .variant-item {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr 1.2fr auto;
+            gap: 1rem;
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transition: 0.3s;
+        }
+
+        .variant-item:hover {
+            border-color: var(--secondary);
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .v-input {
+            padding: 0.8rem !important;
+            border-radius: 10px !important;
+            border: 1px solid var(--border) !important;
+            font-size: 0.9rem !important;
+            background: var(--card-bg) !important;
+        }
+
+        /* --- Inventory Feed --- */
+        .admin-product-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid var(--border);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-product-card:hover {
+            transform: translateX(15px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .admin-product-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--primary);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .admin-product-card:hover::before {
+            opacity: 1;
+        }
+
+        .image-preview-admin {
+            width: 100px;
+            height: 100px;
+            border-radius: 18px;
+            object-fit: cover;
+            box-shadow: var(--shadow);
+            border: 3px solid var(--bg);
+        }
+
+        /* --- Buttons --- */
+        .add-variant-btn {
+            width: 100%;
+            height: 60px;
+            border-radius: 20px;
+            border: 3px dashed var(--accent);
+            background: transparent;
+            color: var(--accent);
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-variant-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-style: solid;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 159, 28, 0.3);
+        }
+
+        .add-variant-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-icon {
+            font-size: 1.4rem;
+            transition: 0.5s;
+        }
+
+        .add-variant-btn:hover .btn-icon {
+            transform: rotate(180deg);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <a href="index.html" class="logo"><img src="logo.png" alt="MaHerbals"></a>
+                <div class="slogan-container">
+                    <span class="slogan-main">MaHerbals</span>
+                    <span class="slogan-sub">Admin Panel</span>
+                </div>
+            </div>
+            <nav class="nav-links" id="main-nav">
+                <!-- script.js will handle injections -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 5rem;">
+        <h1 class="section-title" style="margin-bottom: 5rem; font-size: 3rem; font-weight: 900; letter-spacing: -1px;">
+            Inventory <span style="color: var(--accent);">OS</span>
+        </h1>
+
+        <div class="admin-layout">
+            <!-- Management Form (Left) -->
+            <div class="form-container">
+                <h3 id="form-title"
+                    style="margin-bottom: 2.5rem; color: var(--primary); font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; gap: 0.8rem;">
+                    📝 Product Registration
+                </h3>
+
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                        <div class="field-group">
+                            <label>Botanical Identity (Name)</label>
+                            <input type="text" id="name" required placeholder="eg. Premium Saffron Essence">
+                        </div>
+                        <div class="field-group">
+                            <label>Retail Status</label>
+                            <select id="active">
+                                <option value="true">In Stock & Visible</option>
+                                <option value="false">Out of Stock & Hidden</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                        <div class="field-group">
+                            <label>Market Price (Rs.)</label>
+                            <input type="number" id="price" required step="any" placeholder="000.00">
+                        </div>
+                        <div class="field-group">
+                            <label>Product Mass (kg)</label>
+                            <input type="number" id="weight" required step="0.001" placeholder="eg. 0.500">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                        <div class="field-group">
+                            <label>Stock Category</label>
+                            <select id="category">
+                                <option value="powder" selected>Refined Powder</option>
+                                <option value="oil">Natural Oils</option>
+                                <option value="sheets">Biological Sheets</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label>Volume Metric</label>
+                            <select id="unit">
+                                <option value="kg" selected>Kilograms (kg)</option>
+                                <option value="ml">Milliliters (ml)</option>
+                                <option value="sheets">Count (Sheets)</option>
+                                <option value="pair">Pairs (2 units)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Promotional Strategy</label>
+                        <select id="saleType">
+                            <option value="normal" selected>Standard Listing</option>
+                            <option value="offer">Special Offer (Pulsing Red)</option>
+                            <option value="flash deals">Flash Deal (High Urgency)</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group">
+                        <label>The Story (Description)</label>
+                        <textarea id="description" rows="4" required
+                            placeholder="Describe nature's potential..."></textarea>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Visual Asset (Image)</label>
+                        <input type="file" id="image-file" accept="image/*"
+                            style="padding: 0.8rem; border: 2px dashed var(--border); background: var(--bg); cursor: pointer;">
+                    </div>
+
+                    <!-- Variants Section -->
+                    <div style="margin-top: 3rem;">
+                        <label
+                            style="color: var(--accent); display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.1rem; text-transform: uppercase;">
+                            <span>📦</span> Secondary Options
+                        </label>
+                        <div id="variants-container" style="margin-top: 1.5rem;"></div>
+                        <button type="button" onclick="addVariantField()" class="add-variant-btn">
+                            <span class="btn-icon">✚</span> Add Size / Volume Variant
+                        </button>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 3.5rem;">
+                        <button type="submit" id="save-btn" class="glow-btn"
+                            style="padding: 1.4rem; font-size: 1.3rem;">Save Master Record</button>
+                        <button type="button" id="cancel-btn" class="submit-btn"
+                            style="background:#ef4444; color:white; display:none; border-radius: 15px;">Discard
+                            Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Inventory Feed (Right) -->
+            <div class="inventory-feed">
+                <h3 style="margin-bottom: 2.5rem; color: var(--primary); font-size: 2rem; font-weight: 900;">
+                    Live Feed
+                </h3>
+                <div id="admin-product-list">
+                    <!-- Cards injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const auth = await fetch('/api/check-auth').then(res => res.json());
+            if (!auth || !auth.isAdmin) {
+                const pin = prompt("MaHerbals Security Engine - Enter Master PIN:");
+                if (pin === "075963853") {
+                    await fetch('/api/admin-login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin })
+                    });
+                } else {
+                    window.location.href = 'index.html';
+                    return;
+                }
+            }
+            fetchAdminProducts();
+        });
+
+        async function fetchAdminProducts() {
+            const products = await fetch('/api/products').then(res => res.json());
+            const list = document.getElementById('admin-product-list');
+
+            list.innerHTML = products.map((p, idx) => `
+                <div class="admin-product-card" style="animation-delay: ${idx * 0.1}s;">
+                    <img src="${p.image || 'https://placehold.co/100x100?text=Botanical'}" class="image-preview-admin">
+                    <div style="flex-grow: 1;">
+                        <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: var(--primary);">${p.name}</h4>
+                            <span class="${p.active ? 'badge-active' : 'badge-inactive'}">${p.active ? 'LIVE' : 'HIDDEN'}</span>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <span style="color: var(--secondary); font-weight: 800; font-size: 1.1rem;">Rs. ${parseFloat(p.price).toLocaleString()}</span>
+                            <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">(${p.weight} kg)</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                        <button onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&apos;")})' class="buy-btn" style="padding: 0.7rem 1.2rem; background: var(--secondary); border-radius: 12px; font-weight: 800; font-size: 0.8rem;">MODIFY</button>
+                        <button onclick="deleteProduct(${p.id})" class="buy-btn" style="padding: 0.7rem 1.2rem; background: #fee2e2; color: #ef4444; border-radius: 12px; font-weight: 800; font-size: 0.8rem;">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addVariantField(name = '', price = '', weight = '') {
+            const container = document.getElementById('variants-container');
+            const div = document.createElement('div');
+            div.className = 'variant-item';
+            div.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Size Name</span>
+                    <input type="text" placeholder="eg. 500g" value="${name}" class="v-name v-input">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Price</span>
+                    <input type="number" placeholder="Rs" value="${price}" class="v-price v-input" step="any">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Weight(kg)</span>
+                    <input type="number" placeholder="kg" value="${weight}" class="v-weight v-input" step="any">
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; border:none; color:#ef4444; width: 45px; height: 45px; border-radius: 12px; font-size: 1.8rem; cursor:pointer; align-self:center; transition:0.3s;">&times;</button>
+            `;
+            container.appendChild(div);
+        }
+
+        const form = document.getElementById('product-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('product-id').value;
+            const btn = document.getElementById('save-btn');
+
+            btn.innerHTML = '⚡ Processing...';
+            btn.disabled = true;
+
+            const variants = [];
+            document.querySelectorAll('.variant-item').forEach(item => {
+                const vName = item.querySelector('.v-name').value;
+                const vPrice = item.querySelector('.v-price').value;
+                const vWeight = item.querySelector('.v-weight').value;
+                if (vName && vPrice) {
+                    variants.push({ name: vName, price: parseFloat(vPrice), weight: parseFloat(vWeight) || 0 });
+                }
+            });
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('price', document.getElementById('price').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('unit', document.getElementById('unit').value);
+            formData.append('weight', document.getElementById('weight').value);
+            formData.append('saleType', document.getElementById('saleType').value);
+            formData.append('active', document.getElementById('active').value);
+            formData.append('variants', JSON.stringify(variants));
+
+            const fileInput = document.getElementById('image-file');
+            if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+
+            const url = id ? `/api/products/${id}` : '/api/products';
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, { method, body: formData });
+                if (res.ok) {
+                    resetForm();
+                    fetchAdminProducts();
+                    alert('Store Engine Successfully Updated.');
+                }
+            } catch (e) { alert('Sync Error: Please verify server port 8085.'); }
+            finally {
+                btn.innerHTML = 'Save Master Record';
+                btn.disabled = false;
+            }
+        };
+
+        function editProduct(p) {
+            resetForm();
+            document.getElementById('form-title').innerText = '⚡ Modify Record';
+            document.getElementById('product-id').value = p.id;
+            document.getElementById('name').value = p.name;
+            document.getElementById('price').value = p.price;
+            document.getElementById('description').value = p.description;
+            document.getElementById('category').value = p.category || 'powder';
+            document.getElementById('unit').value = p.unit || 'kg';
+            document.getElementById('weight').value = p.weight || 0;
+            document.getElementById('saleType').value = p.saleType || 'normal';
+            document.getElementById('active').value = p.active === false ? "false" : "true";
+
+            if (p.variants) p.variants.forEach(v => addVariantField(v.name, v.price, v.weight));
+
+            document.getElementById('cancel-btn').style.display = 'block';
+            document.getElementById('save-btn').innerText = 'Commit Changes';
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            document.getElementById('form-title').innerText = '📝 Product Registration';
+            document.getElementById('product-id').value = '';
+            document.getElementById('variants-container').innerHTML = '';
+            form.reset();
+            document.getElementById('cancel-btn').style.display = 'none';
+            document.getElementById('save-btn').innerText = 'Save Master Record';
+        }
+
+        document.getElementById('cancel-btn').onclick = resetForm;
+
+        async function deleteProduct(id) {
+            if (confirm('DANGER: This will permanently purge this item from history. Proceed?')) {
+                await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                fetchAdminProducts();
+            }
+        }
+    </script>
+</body>
+
+</html>
